@@ -1,4 +1,4 @@
-# import time;
+import time;
 # str='i love you';
 # print(str);
 # print(str[3]);
@@ -127,3 +127,21 @@ class Student(object):
 
 Student.name='amos'
 print(Student.name)
+
+import os
+print('查看当前目录：',os.getcwd())
+# os.chdir('e:')
+print('查看当前目录：',os.getcwd())
+# 序列化
+d=dict(name='aa',age='12',score='88')
+import pickle
+# print(pickle.dumps(d))
+with open('test.txt','wb') as f1:
+   pickle.dump(d,f1)
+with open('test.txt','rb') as f2:
+    print(pickle.load(f2))
+import json
+djson=json.dumps(d)
+print(djson)
+
+print('当前时间：',time.strftime('%Y-%m-%d %H:%M:%S-%j-%W-%w',time.localtime()))
