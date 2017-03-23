@@ -70,22 +70,63 @@ from multiprocessing import Pool
 
 from multiprocessing import Queue
 
-def write(q):
-  print('wtite process%s' %os.getpid())
-  for i in [1,2,3,4,5]:
-    print('put %s queue' %i)
-    q.put(i)
-    time.sleep(random.random())
-def read(q):
-  print('read process %s' %os.getpid())
-  while True:
-    value=q.get(True)
-    print('get %s queue' %value)
-if __name__=="__main__":
-  q=Queue()
-  pw=Process(target=write,args=(q,))
-  pr=Process(target=read,args=(q,))
-  pw.start()
-  pr.start()
-  pw.join()
-  pr.terminate()#读取时死循环，所以需要强制停止
+# def write(q):
+#   print('wtite process%s' %os.getpid())
+#   for i in [1,2,3,4,5]:
+#     print('put %s queue' %i)
+#     q.put(i)
+#     time.sleep(random.random())
+# def read(q):
+#   print('read process %s' %os.getpid())
+#   while True:
+#     value=q.get(True)
+#     print('get %s queue' %value)
+# if __name__=="__main__":
+#   q=Queue()
+#   pw=Process(target=write,args=(q,))
+#   pr=Process(target=read,args=(q,))
+#   pw.start()
+#   pr.start()
+#   pw.join()
+#   pr.terminate()#读取时死循环，所以需要强制停止
+# # 多线程 python的标准库提供了两个模块：_thread和threading,_thread是低级模块，threading是高级模块
+# #大部分情况下我们用threading模块
+import threading
+# def loop():
+#   print('thread %s is running....' % threading.current_thread().name)
+#   n=0
+#   while n<5:
+#     n=n+1
+#     print('thread %s >>> %s' % (threading.current_thread().name,n))
+#     time.sleep(1)
+#   print('thread %s ended.' % threading.current_thread().name)
+# print('thread %s is running....' % threading.current_thread().name)
+# t=threading.Thread(target=loop,name='LoopThread')
+# t.start()
+# t.join()
+# print('thread %s ended.' % threading.current_thread().name)
+
+balance=0
+lock=threading.Lock()
+def change_id(n):
+  global balance
+  balance=balance+n
+  balance=balance-n
+def run_thread(n):
+  for i in range(10000000):
+    lock.acquire()
+    try:
+      change_id(n)
+    finally:
+      lock.release()
+t1=threading.Thread(target=run_thread,args=(5,))
+t2=threading.Thread(target=run_thread,args=(8,))
+t1.start()
+t2.start()
+t1.join()
+t2.join()
+print(balance)
+
+
+
+
